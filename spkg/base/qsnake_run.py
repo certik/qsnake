@@ -869,6 +869,7 @@ def erase_binary():
     cmd("rm -rf $QSNAKE_ROOT/local")
     cmd("rm -rf $QSNAKE_ROOT/spkg/build")
     cmd("rm -rf $QSNAKE_ROOT/spkg/installed")
+    cmd("rm -rf $QSNAKE_ROOT/spkg/cache")
     print "    Done."
 
 def run_tests():
