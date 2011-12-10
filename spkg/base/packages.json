@@ -537,6 +537,7 @@
     },
     {
         "dependencies": [
+            "numpy",
             "ase"
         ],
         "download": "qsnake-git",
