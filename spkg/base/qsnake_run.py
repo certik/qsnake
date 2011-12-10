@@ -544,7 +544,7 @@ def install_package(pkg, install_dependencies=True, force_install=False,
     files_list1 = get_files_list()
     install_package_spkg(pkg)
     files_list2 = get_files_list()
-    #check_for_no_modifications(files_list1, files_list2)
+    check_for_no_modifications(files_list1, files_list2)
     installed_files = list(set(files_list2.keys()) - set(files_list1.keys()))
     f = open(expandvars("$QSNAKE_ROOT/spkg/installed/%s" \
             % pkg_make_relative(pkg)), "w")
