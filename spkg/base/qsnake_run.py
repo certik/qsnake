@@ -430,6 +430,8 @@ def get_files_list():
         a = line.split()
         h = md5(" ".join(a[:7]).strip()).hexdigest()
         filename = " ".join(a[7:]).strip()
+        prefix = expandvars("$QSNAKE_ROOT/local/")
+        filename = filename[len(prefix):]
         files[filename] = h
     return files
 
@@ -551,6 +553,18 @@ def install_package(pkg, install_dependencies=True, force_install=False,
     from json import dump
     dump(installed_files, f, sort_keys=True, indent=4)
     f.close()
+
+    print "Copying to cache..."
+    cmd("mkdir -p $QSNAKE_ROOT/spkg/cache")
+    cmd("rm -rf $QSNAKE_ROOT/spkg/cache/%s" % pkg_make_relative(pkg))
+    cmd("mkdir $QSNAKE_ROOT/spkg/cache/%s" % pkg_make_relative(pkg))
+    for f in installed_files:
+        prefix, filename = os.path.split(f)
+        cmd("mkdir -p $QSNAKE_ROOT/spkg/cache/%s/%s" \
+                % (pkg_make_relative(pkg), prefix))
+        cmd('cp "$QSNAKE_ROOT/local/%s" "$QSNAKE_ROOT/spkg/cache/%s/%s/"' \
+                % (f, pkg_make_relative(pkg), prefix))
+    print "    Done."
 
     print
     print "Package '%s' installed." % pkg_make_relative(pkg)
