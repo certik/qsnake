@@ -406,6 +406,7 @@
             "lapack",
             "cmake",
             "numpy",
+            "cython",
             "arpack"
         ],
         "download": "qsnake-git",
