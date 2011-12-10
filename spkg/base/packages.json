@@ -570,7 +570,9 @@
         "version": ""
     },
     {
-        "dependencies": [],
+        "dependencies": [
+            "lapack"
+        ],
         "download": "qsnake-git",
         "name": "umfpack",
         "version": ""
