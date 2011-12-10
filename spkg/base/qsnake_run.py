@@ -549,7 +549,7 @@ def install_package(pkg, install_dependencies=True, force_install=False,
     f = open(expandvars("$QSNAKE_ROOT/spkg/installed/%s" \
             % pkg_make_relative(pkg)), "w")
     from json import dump
-    dump(installed_files, f)
+    dump(installed_files, f, sort_keys=True, indent=4)
     f.close()
 
     print
