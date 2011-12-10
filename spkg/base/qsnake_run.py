@@ -566,6 +566,12 @@ def install_package(pkg, install_dependencies=True, force_install=False,
                 % (f, pkg_make_relative(pkg), prefix))
     print "    Done."
 
+    print "Creating links..."
+    cmd("mkdir -p $QSNAKE_ROOT/spkg/root")
+    cmd("cp -al $QSNAKE_ROOT/spkg/cache/%s/* $QSNAKE_ROOT/spkg/root/" \
+            % pkg_make_relative(pkg))
+    print "    Done."
+
     print
     print "Package '%s' installed." % pkg_make_relative(pkg)
 
