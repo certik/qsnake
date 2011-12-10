@@ -421,7 +421,8 @@ def get_files_list():
     from hashlib import md5
     _, log = mkstemp()
     print "Calculating the list of installed files..."
-    cmd("find $QSNAKE_ROOT/local -type f -exec ls -l {} + > %s" % log)
+    prefix = expandvars("$QSNAKE_ROOT/spkg/tmp_root")
+    cmd("find %s -type f -exec ls -l {} + > %s" % (prefix, log))
     l = open(log).readlines()
     cmd("rm %s" % log)
     print "    Done."
@@ -430,7 +431,6 @@ def get_files_list():
         a = line.split()
         h = md5(" ".join(a[:7]).strip()).hexdigest()
         filename = " ".join(a[7:]).strip()
-        prefix = expandvars("$QSNAKE_ROOT/local/")
         filename = filename[len(prefix):]
         files[filename] = h
     return files
@@ -556,7 +556,6 @@ def install_package(pkg, install_dependencies=True, force_install=False,
     files_list1 = get_files_list()
     install_package_spkg(pkg)
     files_list2 = get_files_list()
-    cmd("rm -rf $QSNAKE_ROOT/spkg/tmp_root/")
     # Skip the modification check until all packages are fixed:
     #check_for_no_modifications(files_list1, files_list2)
     installed_files = list(set(files_list2.keys()) - set(files_list1.keys()))
@@ -574,9 +573,10 @@ def install_package(pkg, install_dependencies=True, force_install=False,
         prefix, filename = os.path.split(f)
         cmd("mkdir -p $QSNAKE_ROOT/spkg/cache/%s/%s" \
                 % (pkg_make_relative(pkg), prefix))
-        cmd('cp "$QSNAKE_ROOT/local/%s" "$QSNAKE_ROOT/spkg/cache/%s/%s/"' \
+        cmd('cp "$QSNAKE_ROOT/spkg/tmp_root/%s" "$QSNAKE_ROOT/spkg/cache/%s/%s/"' \
                 % (f, pkg_make_relative(pkg), prefix))
     print "    Done."
+    cmd("rm -rf $QSNAKE_ROOT/spkg/tmp_root/")
 
     print "Creating links..."
     cmd("mkdir -p $QSNAKE_ROOT/spkg/root")
