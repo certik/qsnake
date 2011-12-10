@@ -551,7 +551,8 @@
     },
     {
         "dependencies": [
-            "curl"
+            "curl",
+            "python"
         ],
         "download": "qsnake-spkg",
         "name": "python_pycurl",
