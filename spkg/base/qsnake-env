@@ -6,28 +6,29 @@ if [ "$QSNAKE_ROOT" = "" ]; then
 fi
 
 # Setting project neutral envrironment variables
-export SPKG_LOCAL="$QSNAKE_ROOT/local"
-export PATH="$QSNAKE_ROOT:$SPKG_LOCAL/bin:$PATH"
-export LD_LIBRARY_PATH="$SPKG_LOCAL/lib/:$LD_LIBRARY_PATH"
+export SPKG_LOCAL="$QSNAKE_ROOT/spkg/tmp_root"
+export SPKG_LOCAL2="$QSNAKE_ROOT/local"
+export PATH="$QSNAKE_ROOT:$SPKG_LOCAL2/bin:$PATH"
+export LD_LIBRARY_PATH="$SPKG_LOCAL2/lib/:$LD_LIBRARY_PATH"
 if [ "$(uname)" = "Darwin" ]; then
-    export DYLD_LIBRARY_PATH="$SPKG_LOCAL/lib/:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="$SPKG_LOCAL2/lib/:$DYLD_LIBRARY_PATH"
 fi
 
 if [ "$LIBRARY_PATH" = "" ]; then
     # It is important to *not* have ":" at the end of the path, otherwise gcc
     # fails to run properly:
     # gcc: ./specs: Is a directory
-    export LIBRARY_PATH="$SPKG_LOCAL/lib/"
+    export LIBRARY_PATH="$SPKG_LOCAL2/lib/"
 else
-    export LIBRARY_PATH="$SPKG_LOCAL/lib/:$LIBRARY_PATH"
+    export LIBRARY_PATH="$SPKG_LOCAL2/lib/:$LIBRARY_PATH"
 fi
 
 # Setup Python:
-export PYTHONPATH="$SPKG_LOCAL/lib/python"
-export PYTHONHOME="$SPKG_LOCAL"
+export PYTHONPATH="$SPKG_LOCAL2/lib/python"
+export PYTHONHOME="$SPKG_LOCAL2"
 
 # Needed for "pkg-config":
-export PKG_CONFIG_PATH="$SPKG_LOCAL/lib/pkgconfig/"
+export PKG_CONFIG_PATH="$SPKG_LOCAL2/lib/pkgconfig/"
 
 
 # Setting Sage-related location environment variables.
