@@ -447,6 +447,14 @@ def check_for_no_modifications(old, new):
         if new[f] != old[f]:
             raise Exception("File '%s' was modified" % f)
 
+def install_deps_tmp_root(pkg):
+    print "Copying dependencies for '%s'" % pkg
+    cmd("mkdir -p $QSNAKE_ROOT/spkg/tmp_root/")
+    for dep in get_dependencies(pkg):
+        cmd("cp -al $QSNAKE_ROOT/spkg/cache/%s/* $QSNAKE_ROOT/spkg/tmp_root/" \
+                % pkg_make_relative(dep))
+        install_deps_tmp_root(dep)
+
 def install_package_spkg(pkg):
     print "Installing %s..." % pkg
     name, version = extract_name_version_from_path(pkg)
@@ -541,11 +549,14 @@ def install_package(pkg, install_dependencies=True, force_install=False,
     # Create the standard POSIX directories:
     for d in ["bin", "doc", "include", "lib", "man", "share"]:
         cmd("mkdir -p $QSNAKE_ROOT/local/%s" % d)
+        cmd("mkdir -p $QSNAKE_ROOT/spkg/tmp_root/%s" % d)
     for script in qsnake_scripts:
         cmd("cp $QSNAKE_ROOT/spkg/base/%s $QSNAKE_ROOT/local/bin/" % script)
+    install_deps_tmp_root(pkg)
     files_list1 = get_files_list()
     install_package_spkg(pkg)
     files_list2 = get_files_list()
+    cmd("rm -rf $QSNAKE_ROOT/spkg/tmp_root/")
     check_for_no_modifications(files_list1, files_list2)
     installed_files = list(set(files_list2.keys()) - set(files_list1.keys()))
     f = open(expandvars("$QSNAKE_ROOT/spkg/installed/%s" \
