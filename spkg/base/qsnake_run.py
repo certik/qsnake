@@ -413,7 +413,7 @@ def get_files_list():
     """
     Returns the list of files together with their hashes.
 
-    For now it just uses "ls -l" and hashes the permissions/size/date, because
+    For now it just uses "ls -Ll" and hashes the permissions/size/date, because
     it is much faster than md5sum and it should be robust enough for our
     purposes.
     """
@@ -422,7 +422,7 @@ def get_files_list():
     _, log = mkstemp()
     print "Calculating the list of installed files..."
     prefix = expandvars("$QSNAKE_ROOT/spkg/tmp_root")
-    cmd("find %s -type f -exec ls -l {} + > %s" % (prefix, log))
+    cmd("find -L %s -type f -exec ls -Ll {} + > %s" % (prefix, log))
     l = open(log).readlines()
     cmd("rm %s" % log)
     print "    Done."
