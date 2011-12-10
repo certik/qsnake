@@ -409,6 +409,42 @@ def download_packages():
             cmd("cd $QSNAKE_ROOT/spkg/standard; ../../qsnake --create-package %s" % p)
             print "\n"
 
+def get_files_list():
+    """
+    Returns the list of files together with their hashes.
+
+    For now it just uses "ls -l" and hashes the permissions/size/date, because
+    it is much faster than md5sum and it should be robust enough for our
+    purposes.
+    """
+    from tempfile import mkstemp
+    from hashlib import md5
+    _, log = mkstemp()
+    print "Calculating the list of installed files..."
+    cmd("find $QSNAKE_ROOT/local -type f -exec ls -l {} + > %s" % log)
+    l = open(log).readlines()
+    cmd("rm %s" % log)
+    print "    Done."
+    files = {}
+    for line in l:
+        a = line.split()
+        h = md5(" ".join(a[:7]).strip()).hexdigest()
+        filename = " ".join(a[7:]).strip()
+        files[filename] = h
+    return files
+
+def check_for_no_modifications(old, new):
+    """
+    Checks that 'new' contains all the files from 'old' (unmodified).
+
+    Raises an exception otherwise.
+    """
+    for f in old:
+        if f not in new:
+            raise Exception("File '%s' was deleted" % f)
+        if new[f] != old[f]:
+            raise Exception("File '%s' was modified" % f)
+
 def install_package_spkg(pkg):
     print "Installing %s..." % pkg
     name, version = extract_name_version_from_path(pkg)
@@ -505,8 +541,16 @@ def install_package(pkg, install_dependencies=True, force_install=False,
         cmd("mkdir -p $QSNAKE_ROOT/local/%s" % d)
     for script in qsnake_scripts:
         cmd("cp $QSNAKE_ROOT/spkg/base/%s $QSNAKE_ROOT/local/bin/" % script)
+    files_list1 = get_files_list()
     install_package_spkg(pkg)
-    cmd("touch $QSNAKE_ROOT/spkg/installed/%s" % pkg_make_relative(pkg))
+    files_list2 = get_files_list()
+    #check_for_no_modifications(files_list1, files_list2)
+    installed_files = list(set(files_list2.keys()) - set(files_list1.keys()))
+    f = open(expandvars("$QSNAKE_ROOT/spkg/installed/%s" \
+            % pkg_make_relative(pkg)), "w")
+    from json import dump
+    dump(installed_files, f)
+    f.close()
 
     print
     print "Package '%s' installed." % pkg_make_relative(pkg)
