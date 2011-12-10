@@ -6,7 +6,7 @@ if [ "$QSNAKE_ROOT" = "" ]; then
 fi
 
 # Setting project neutral envrironment variables
-export SPKG_LOCAL="$QSNAKE_ROOT/local"
+export SPKG_LOCAL="$QSNAKE_ROOT/spkg/tmp_root"
 export PATH="$QSNAKE_ROOT:$SPKG_LOCAL/bin:$PATH"
 export LD_LIBRARY_PATH="$SPKG_LOCAL/lib/:$LD_LIBRARY_PATH"
 if [ "$(uname)" = "Darwin" ]; then

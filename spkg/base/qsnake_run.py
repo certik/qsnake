@@ -473,7 +473,7 @@ def install_package_spkg(pkg):
             cmd("cd $QSNAKE_ROOT/spkg/build; tar xf %s" % pkg)
     cmd("cd $QSNAKE_ROOT/spkg/build/%s-%s; chmod +x spkg-install" % (name, version))
     try:
-        cmd("cd $QSNAKE_ROOT/spkg/build/%s-%s; . $QSNAKE_ROOT/local/bin/qsnake-env; ./spkg-install" % (name, version))
+        cmd("cd $QSNAKE_ROOT/spkg/build/%s-%s; .  $QSNAKE_ROOT/local/bin/qsnake-env.build; ./spkg-install" % (name, version))
     except CmdException:
         raise PackageBuildFailed()
     cmd("cd $QSNAKE_ROOT/spkg/build; rm -rf %s-%s" % (name, version))
