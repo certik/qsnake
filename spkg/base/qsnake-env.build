@@ -7,11 +7,14 @@ fi
 
 # Setting project neutral envrironment variables
 export SPKG_LOCAL="$QSNAKE_ROOT/spkg/tmp_root"
-export PATH="$QSNAKE_ROOT:$SPKG_LOCAL/bin:$PATH"
+export PATH="$SPKG_LOCAL/bin:$PATH"
 export LD_LIBRARY_PATH="$SPKG_LOCAL/lib/:$LD_LIBRARY_PATH"
 if [ "$(uname)" = "Darwin" ]; then
     export DYLD_LIBRARY_PATH="$SPKG_LOCAL/lib/:$DYLD_LIBRARY_PATH"
 fi
+
+# Compatibility with a few packages:
+export SAGE_LOCAL="$SPKG_LOCAL"
 
 if [ "$LIBRARY_PATH" = "" ]; then
     # It is important to *not* have ":" at the end of the path, otherwise gcc
@@ -28,22 +31,6 @@ export PYTHONHOME="$SPKG_LOCAL"
 
 # Needed for "pkg-config":
 export PKG_CONFIG_PATH="$SPKG_LOCAL/lib/pkgconfig/"
-
-
-# Setting Sage-related location environment variables.
-export SAGE_ROOT="$QSNAKE_ROOT"
-export SAGE_PACKAGES="$QSNAKE_ROOT/spkg"
-export SAGE_LOCAL="$SPKG_LOCAL"
-export SAGE_DATA="$QSNAKE_ROOT/data"
-export SAGE_DOC="$QSNAKE_ROOT/devel/sage/doc"
-
-if [ "$DOT_SAGE" = "" ]; then
-    export DOT_SAGE="$HOME/.qsnake/"
-fi
-
-if [ "$SAGE_STARTUP_FILE" = "" ]; then
-    export SAGE_STARTUP_FILE="$DOT_SAGE/init.sage"
-fi
 
 ############ compilation flags
 
